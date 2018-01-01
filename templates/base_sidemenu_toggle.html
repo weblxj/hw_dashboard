@@ -1,0 +1,127 @@
+{% extends "bootstrap/base.html" %}
+
+{% block title %}ManageSys{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+        
+<!-- Custom styles for this template -->
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='simple-sidebar.css') }}" >
+
+{% endblock %}
+
+{% block navbar %}
+<div class="navbar navbar-default navbar-inverse" role="navigation">
+    <div class="container">
+        <div class="navbar-header" >
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="{{ url_for('task') }}">Mainpage</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+            {% if current_user.is_authenticated %}
+                <li>
+                <a href="{{ url_for('task') }}">{{ current_user.username }}</a>
+                </li>
+                <li>
+                <a href="{{ url_for('.logout') }}">Signoff <span class="glyphicon glyphicon-off"></span></a>
+                </li>
+            {% else %}
+                <li>
+                <a href="{{ url_for('.login') }}">Signin</a>
+                </li>
+            {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block content %}
+  <div id="wrapper" class="toggled">
+  
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper" >
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand" >
+                    <a href="#">
+                        Project
+                    </a>
+                </li>
+                <li>
+                    <a href="#?id=1" id=1 onclick="changeActiveRow(this)">MPP</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('.task') }}?id=2" id=2  onclick="changeActiveRow(this)">Volantis</a>
+                </li>
+                <li>
+                    <a href="{{ url_for('.task') }}?id=3" id=3 onclick="changeActiveRow(this)">DPP</a>
+                </li>
+                <li>
+                    <a href="#">About</a>
+                </li>
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+
+                <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a>
+                <br><br>
+
+
+                    {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning">
+                        <button type="button" class="close" data-dismiss="alert">&times;</button>
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                
+                    {% block page_content %}{% endblock %}
+                
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-restmod/1.1.11/angular-restmod-bundle.min.js"></script>
+    <script>
+            $("#menu-toggle").click(function(e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+    </script>
+
+    <script type="text/javascript">
+        var currentActiveRow; //当前活动行
+        
+        //改变选中行的颜色
+        function changeActiveRow(obj) {
+            //alert("test");
+            if (currentActiveRow) {
+                currentActiveRow.style.backgroundColor = "";
+            }
+            currentActiveRow = obj;
+            currentActiveRow.style.backgroundColor = "#F2F2F2";
+        };
+
+        $(document).ready(function() { 
+            // put all your jQuery goodness in here.
+            var id = {{id}};
+           // alert("id:"+id);
+            changeActiveRow( document.getElementById( id ) );
+        }); 
+    </script>  
+ 
+{% endblock %}
